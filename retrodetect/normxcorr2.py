@@ -28,9 +28,9 @@ def normxcorr2(template, image, mode="full"):
     """
 
     # If this happens, it is probably a mistake
-#    if np.ndim(template) > np.ndim(image) or \
-#            len([i for i in range(np.ndim(template)) if template.shape[i] > image.shape[i]]) > 0:
-#        print("normxcorr2: TEMPLATE larger than IMG. Arguments may be swapped.")
+    #    if np.ndim(template) > np.ndim(image) or \
+    #            len([i for i in range(np.ndim(template)) if template.shape[i] > image.shape[i]]) > 0:
+    #        print("normxcorr2: TEMPLATE larger than IMG. Arguments may be swapped.")
 
     template = template - np.mean(template)
     image = image - np.mean(image)
@@ -39,7 +39,7 @@ def normxcorr2(template, image, mode="full"):
     # Faster to flip up down and left right then use fftconvolve instead of scipy's correlate
     ar = np.flipud(np.fliplr(template))
     out = fftconvolve(image, ar.conj(), mode=mode)
-    
+
     image = fftconvolve(np.square(image), a1, mode=mode) - \
             np.square(fftconvolve(image, a1, mode=mode)) / (np.prod(template.shape))
 
@@ -51,5 +51,5 @@ def normxcorr2(template, image, mode="full"):
 
     # Remove any divisions by 0 or very close to 0
     out[np.where(np.logical_not(np.isfinite(out)))] = 0
-    
+
     return out
