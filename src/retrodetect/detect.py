@@ -2,6 +2,7 @@ import numpy as np
 
 from retrodetect.image_processing.image_processing import ensemblegetshift, getblockmaxedimage, alignandsubtract
 
+
 def detect(
         flash: np.array,
         noflash: np.array,
@@ -189,8 +190,6 @@ def detectcontact(
     sets = sets[keepafter:]
     #    #we just align to the first of the old sets.
     imgcorrection = 20
-    #    shift = ensemblegetshift(sets[-1]['noflash'][0]['img'],sets[0]['noflash'][0]['img'],searchbox=imgcorrection,step=2,searchblocksize=50,ensemblesizesqrt=3)
-    #    #res = alignandsubtract(last_diff,shift,this_diff,margin=10)
 
     res = detect(this_diff, last_diff, blocksize=10,
                  offset=3, searchbox=imgcorrection)
@@ -205,9 +204,6 @@ def detectcontact(
         y, x = np.unravel_index(searchimg.argmax(), searchimg.shape)
         searchmax = searchimg[y, x]
 
-        # if (x<savesize) or (y<savesize) or (x>searchimg.shape[1]-savesize-1) or (y>searchimg.shape[0]-savesize-1): continue
-        # target = 1*(((y-truey+alignmentcorrection)**2 + (x-truex+alignmentcorrection)**2)<10**2)
-        # print(x,truex,y,truey)
         patch = img[y - savesize + imgcorrection:y + savesize + imgcorrection, x -
                                                                                savesize + imgcorrection:x + savesize + imgcorrection].astype(
             np.float32)

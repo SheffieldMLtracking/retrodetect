@@ -104,10 +104,13 @@ def test_detectcontact_nan(photo_list,contact_expected_output_nan):
     expected_searchimg = load((os.path.join(os.getcwd(), "tests", "data", "searchimg_n9_del100.npz")))
     expected_searchimg = expected_searchimg['arr_0']
     assert np.allclose(searchimg, expected_searchimg)
-    for item_tested, item_expected in itertools.zip_longest(contact, contact_expected_output_nan):
+
+    for item_tested, item_expected in itertools.zip_longest(contact,contact_expected_output_nan):
+        item_tested['prediction'] = None if np.isnan(item_tested['prediction']) else item_tested['prediction']
+        item_expected['prediction'] = None if np.isnan(item_expected['prediction']) else item_expected['prediction']
+
         assert np.allclose(item_tested.pop('patch'), item_expected.pop('patch'))
         assert np.allclose(item_tested.pop('searchpatch'), item_expected.pop('searchpatch'))
         assert item_tested == item_expected
-
 
 
