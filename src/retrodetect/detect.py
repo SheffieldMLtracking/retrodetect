@@ -1,9 +1,6 @@
 import numpy as np
 
 from retrodetect.image_processing.image_processing import ensemblegetshift, getblockmaxedimage, alignandsubtract
-import numbers
-import os
-
 
 def detect(
         flash: np.array,
@@ -33,7 +30,6 @@ def detect(
     """
     shift = ensemblegetshift(flash, noflash, searchbox,
                              step, searchblocksize, ensemblesizesqrt)
-    # print(shift)
     if dilate:
         noflash = getblockmaxedimage(noflash, blocksize, offset)
     done = alignandsubtract(noflash, shift, flash, margin=margin)
@@ -107,7 +103,6 @@ def detectcontact(
     if startn < 0:
         startn = 0
     for i in range(startn, n + 1):
-        # photoitem = q.read(i)
         photoitem = photolist[i]
         if photoitem is None:
             continue
@@ -115,15 +110,12 @@ def detectcontact(
             continue
         if photoitem['img'] is None:
             continue
-        # assert not isinstance(
-        #    photoitem['img'][0, 0], numbers.Integral), "Need image array to be float not integers." #SC:check one of the number of the img array # I think we need to force it
         photoitem['img'] = photoitem['img'].astype(float)
         if 'mean' not in photoitem:
             photoitem['mean'] = np.mean(photoitem['img'][::5, ::5])
-        # photoitem['img'] = photoitem['img'].astype(np.float) #already done
         tt = photoitem['record']['triggertime']
-        chosenset = None  # chosenset is always NONE after the loop?
-        for s in unsortedsets:  # SC: it is empty in each loop so I don't think it loops through
+        chosenset = None
+        for s in unsortedsets:
             if np.abs(tt - np.mean([photoi['record']['triggertime'] for photoi in s])) < 0.5:
                 chosenset = s
         if chosenset is None:
