@@ -28,7 +28,7 @@ def normxcorr2(
     * "same": The output has the same size as the image, centered with respect to the `"full"` output.
     :return: An N-dimensional array of the same dimensionality as the `image` but with a size that depends on the chosen `mode`.
     """
-    # SC: need to do try break
+    # SC: need to do try break based on the below???
     # If this happens, it is probably a mistake
     #    if np.ndim(template) > np.ndim(image) or \
     #            len([i for i in range(np.ndim(template)) if template.shape[i] > image.shape[i]]) > 0:

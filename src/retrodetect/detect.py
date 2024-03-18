@@ -1,3 +1,6 @@
+"""
+This module contains functions used for detection of the reflective tags.
+"""
 import numpy as np
 
 from retrodetect.image_processing.image_processing import ensemblegetshift, getblockmaxedimage, alignandsubtract
@@ -235,14 +238,8 @@ def detectcontact(
         res = np.array(
             [[searchmax, centremax, mean, outersurround, innersurround, centre]])
         pred = -4  # 250 - centremax
-        # pred -= (centremax-200)/160
-        # pred -= (searchmax-200)/60
         pred += 50 / (1 + searchmax)  # 50->+1
         pred += 50 / (1 + centremax)
-        # if centremax>250: pred-=2
-        # if searchmax>70: pred-=2
-        # pred -= min((centremax/innersurround)/30,4)
-        # pred -= (centremax/outersurround)/60
         pred += 20 * innersurround / centremax
         pred += 20 * outersurround / centremax
         pred += mean / 10  # not that helpful

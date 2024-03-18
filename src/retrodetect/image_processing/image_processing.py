@@ -8,7 +8,7 @@ from .normxcorr2 import normxcorr2
 def shiftimg(
         test: np.array,
         shift: tuple,
-        # SC: however, the function (ensemblegetshift) which output for the 'shift' of this function actually returns a list. so not sure how it can work
+        # SC: however, the function (ensemblegetshift) which output for the 'shift' of this function actually returns a list. nonetheless, it works anyway
         cval: int
 ) -> np.array:
     """
@@ -63,7 +63,8 @@ def getshift(
 
     """
 
-    # SC: Do we want to do this, but I am not sure with the compatible numbers  # * **ValueError:** If `start` or `end` are not compatible shapes with `imgA.shape`.
+    # SC: Do we want to do a try/break for this value error, but I am not sure with the compatible numbers
+    # * **ValueError:** If `start` or `end` are not compatible shapes with `imgA.shape`.
     if start is None:
         start = np.array([searchbox, searchbox])
     if end is None:
@@ -87,12 +88,9 @@ def ensemblegetshift(
         step: int = 8,
         searchblocksize: int = 50,
         ensemblesizesqrt=3
-) -> list:  # but the output of this function needs to be a tuple for use in another function alignandsubtract
-    """#SC is this correct?
+) -> list:  # but the output of this function needs to be a tuple for use in another function alignandsubtract. But it seems working anyway
+    """
     Calculates the median shift to align img_1 with img_2 using an ensemble approach.
-
-    searchblock: how big each search image pair should be.
-    ensemblesizesqrt: number of items for ensemble for one dimension.
 
     :param img_1: The input image from which sub-regions will be extracted and aligned.
     :param img_2: The reference image to which different sub-regions of img_1 will be aligned.
@@ -137,9 +135,7 @@ def getblockmaxedimage(
     :param offset: The extent of the neighborhood around each pixel to search for the maximum, expressed as a multiple of the `blocksize`.
     :return: A new image with the same shape as the input image, where each pixel is replaced by the approximate maximum within its local neighborhood.
     """
-    # import time
-    # times = []
-    # times.append(time.time())
+
     k = int(img.shape[0] / blocksize)
     l = int(img.shape[1] / blocksize)
     if blocksize == 1:
@@ -148,11 +144,8 @@ def getblockmaxedimage(
         # from https://stackoverflow.com/questions/18645013/windowed-maximum-in-numpy
         maxes = img[:k * blocksize, :l *
                                      blocksize].reshape(k, blocksize, l, blocksize).max(axis=(-1, -3))
-    # times.append(time.time())
-    templist = []
     xm, ym = maxes.shape
     i = 0
-    # (if offset=1, for xoff in [0]) (if offset=2, for xoff in [-1,0,1])...
     for xoff in range(-offset + 1, offset, 1):
         for yoff in range(-offset + 1, offset, 1):
             if i == 0:
@@ -162,26 +155,12 @@ def getblockmaxedimage(
                 max_img = np.maximum(
                     max_img, maxes[xoff + offset:xoff + xm - offset, yoff + offset:yoff + ym - offset])
             i += 1
-            # templist.append(maxes[xoff+offset:xoff+xm-offset,yoff+offset:yoff+ym-offset])
-    # times.append(time.time())
-    # max_img = templist[0]
-    # for im in templist[1:]:
-    #    max_img = np.maximum(max_img,im)
-    # times.append(time.time())
+
     out_img = np.full_like(img, 255)
-    # times.append(time.time())
     inner_img = max_img.repeat(blocksize, axis=0).repeat(blocksize, axis=1)
-    # times.append(time.time())
-    # s = (out_img.shape-new_inner_img.shape)/2
     out_img[blocksize * offset:(blocksize * offset + inner_img.shape[0]),
     blocksize * offset:(blocksize * offset + inner_img.shape[1])] = inner_img
-    # times.append(time.time())
-    # print("----------")
-    # print(np.diff(times))
-    #    out_img[:blocksize*offset,:] = 255
-    #    out_img[-(blocksize*offset):,:] = 255
-    #    out_img[:,:blocksize*offset] = 255
-    #    out_img[:,-(blocksize*offset):] = 255
+
     return out_img
 
 
