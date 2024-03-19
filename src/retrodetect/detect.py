@@ -1,8 +1,9 @@
+"""
+This module contains functions used for detection of the reflective tags.
+"""
 import numpy as np
-# import QueueBuffer as QB #SC:did not find it being used
+
 from retrodetect.image_processing.image_processing import ensemblegetshift, getblockmaxedimage, alignandsubtract
-import numbers
-import os
 
 
 def detect(
@@ -33,7 +34,6 @@ def detect(
     """
     shift = ensemblegetshift(flash, noflash, searchbox,
                              step, searchblocksize, ensemblesizesqrt)
-    # print(shift)
     if dilate:
         noflash = getblockmaxedimage(noflash, blocksize, offset)
     done = alignandsubtract(noflash, shift, flash, margin=margin)
@@ -41,41 +41,63 @@ def detect(
 
 
 def detectcontact(
-        photolist: object,
-        n: object,
+        photolist: list,
+        n: int,
         savesize: int = 20,
         delsize: int = 15,
-        thresholds: object = [9, 0.75, 6],
+        thresholds: list = [9, 0.75, 6],
         historysize: int = 10,
-        blocksize: object = 10,
-        Npatches: object = 20
-) -> object:
+        blocksize: int = 10,
+        Npatches: int = 20
+) -> tuple:
     """
-    photolist = list of photoitems (these are in the files saved by the tracking system).
-    n = index from this list to compute the locations for.
-    savesize = controls the size of the patch that is saved into the 'contact' object.
-    delsize = controls the size of the patch that is deleted from the search image around a maximum.
-    thresholds = thresholds for 'non-ML' decision boundary for if a maximum is a reflector
-    historysize = how far back through the list to go, when computing
-    blocksize = how much to dilate the current no-flash image compared to the current flash image
+    This function analyzes a sequence of photos captured by a tracking system to detect potential retroreflectors.
+    :param photolist: A list of dictionaries representing captured photos. Each dictionary (`photoitem`) should have the following keys:
+        - `record`: (dictionary) Contains metadata about the photo, including whether the photo is taken with flash (`flash`),
+        end of a set (`endofset`), `flashselection`, `direction`, `index`, and information about the trigger time (`triggertime`, `triggertimestring`).
+        - `img`: (numpy.ndarray) The image data as a 2D array.
+        - `mean` (float, optional): The pre-computed mean value of the image (used for efficiency). If not provided, it will be calculated.
+
+    :param n: The index within `photolist` to use as the current (flash) image for analysis.
+    :param savesize: Controls the size (in pixels) of the square patch extracted around a candidate peak in the search image
+     and to be saved into the output `patch` in the output 'contact'. Defaults to 20.
+    :param delsize: Controls the size (in pixels) of the square patch that is deleted from the search image around the maximum
+     Defaults to 15.
+    :param thresholds: A list of three values used as thresholds for 'non-ML' decision boundary classifying a candidate
+     peak as a potential retroreflector. Defaults to [9, 0.75, 6]. The elements correspond to:
+        - `thresholds[0]`: Maximum intensity threshold in the search image.
+        - `thresholds[1]`: Mean intensity threshold of the patch around the peak.
+        - `thresholds[2]`: Maximum intensity threshold within the central region of the patch. Defaults to [9, 0.75, 6].
+    :param historysize: The number of photos (including the current one) to consider from `photolist` during the analysis.
+    Defaults to 10 photos back in time.
+    :param blocksize: The amount of dilation applied to the current no-flash image before computing the difference with
+    the flash image. Defaults to 10.
+    :param Npatches: The number of patches to consider around potential peaks/maximum in the search image.
+    Defaults to 20.
+    :return: A tuple containing three elements:
+
+        contact (list): A list of dictionaries, each representing a potential retroreflector candidate. Each dictionary (`contact_item`) has the following keys:
+            - `x`: (int) The x-coordinate (pixel position) of the candidate peak in the search image.
+            - `y`: (int) The y-coordinate (pixel position) of the candidate peak in the search image.
+            - `patch`: (numpy.ndarray) The patch extracted from the current flash image around the candidate peak by minusing the current no-flash photo.
+            - `searchpatch`: (numpy.ndarray) The patch extracted from the search image around the candidate peak, i.e.,
+            the difference between current pairs and previous pairs of photos (variously dilated)
+                               which is searched for its maximum values.
+            - `mean`: (int) The mean intensity value of the patch from the current flash image.
+            - `centre`: (int) The maximum intensity value within the central region of the patch from the current flash image.
+            - `innersurround`: (int) The maximum intensity value in a ring-shaped region around the central area of the patch from the current flash image.
+            - `outersurround`: (int) The maximum intensity value in the outer region of the patch from the current flash image.
+            - `searchmax`: (int) The maximum intensity value in the searchpatch.
+            - `centremax`: (int) The maximum intensity value within the central region of the searchpatch.
+            - `confident`: (bool) A flag indicating whether the analysis is confident about the candidate being a retroreflector.
+            - `prediction`: (float) A score reflecting the confidence level (closer to negative values indicates higher confidence).
+
+        found (bool): A boolean value indicating whether a candidate with high confidence (`confident=True`) was found.
+
+        searchimg (numpy.ndarray): The search image used for peak detection after processing and thresholding, useful for debugging.
+
 
     TODO Fix Bug: The code relies on the savesize = 20, as that places the peak at 20,20 in the patch.
-
-    Returns:
-    contact = This is a list of dictionaries, each associated with a candidate peak in the search image, with these fields:
-                 x and y - position of this maximum [ESSENTIAL]
-                 patch - the current flash photo minus the current no-flash photo
-                 searchpatch - the difference between current pairs and previous pairs of photos (variously dilated)
-                               which is searched for its maximum values.
-                 mean, searchmax, centremax - various features.
-                 confident - a boolean measure of whether the system thinks this is the dot
-                 prediction - a real value reporting confidence in being a true retroreflector (NEGATIVE=More likely).
-                               the current system works well with a threshold of zero. [ESSENTIAL]
-
-    found = whether a confident dot has been found.
-    searchimg = more for debugging, the searchimg used for finding maximums.
-
-    Npatches = number of patches to consider (each patch is centred on a maximum)
 
 
     """
@@ -85,7 +107,6 @@ def detectcontact(
     if startn < 0:
         startn = 0
     for i in range(startn, n + 1):
-        # photoitem = q.read(i)
         photoitem = photolist[i]
         if photoitem is None:
             continue
@@ -93,11 +114,9 @@ def detectcontact(
             continue
         if photoitem['img'] is None:
             continue
-        assert not isinstance(
-            photoitem['img'][0, 0], numbers.Integral), "Need image array to be float not integers."
+        photoitem['img'] = photoitem['img'].astype(float)
         if 'mean' not in photoitem:
             photoitem['mean'] = np.mean(photoitem['img'][::5, ::5])
-        # photoitem['img'] = photoitem['img'].astype(np.float) #already done
         tt = photoitem['record']['triggertime']
         chosenset = None
         for s in unsortedsets:
@@ -130,7 +149,7 @@ def detectcontact(
     last_diff = None
     this_diff = None
     if len(sets) < 2:
-        print("Fewer than two photo sets available")
+        print("Fewer than two photo sets available")  # warning msg
         return None, False, None  # we can't do this if we only have one photo set
     for i, s in enumerate(sets):
         # whether the set is the one that we're looking for the bee in.
@@ -152,7 +171,7 @@ def detectcontact(
                 else:
                     # for the past ones we don't
                     diff = detect(s['flash'][0]['img'],
-                                  s_nf['img'], dilate=None)
+                                  s_nf['img'], dilate=None)  # SC: dilate should be boolean. FALSE
                     if diff is not None:
                         s_nf['nodilationdiff'] = diff
                 if last_diff is None:
@@ -174,8 +193,6 @@ def detectcontact(
     sets = sets[keepafter:]
     #    #we just align to the first of the old sets.
     imgcorrection = 20
-    #    shift = ensemblegetshift(sets[-1]['noflash'][0]['img'],sets[0]['noflash'][0]['img'],searchbox=imgcorrection,step=2,searchblocksize=50,ensemblesizesqrt=3)
-    #    #res = alignandsubtract(last_diff,shift,this_diff,margin=10)
 
     res = detect(this_diff, last_diff, blocksize=10,
                  offset=3, searchbox=imgcorrection)
@@ -190,9 +207,6 @@ def detectcontact(
         y, x = np.unravel_index(searchimg.argmax(), searchimg.shape)
         searchmax = searchimg[y, x]
 
-        # if (x<savesize) or (y<savesize) or (x>searchimg.shape[1]-savesize-1) or (y>searchimg.shape[0]-savesize-1): continue
-        # target = 1*(((y-truey+alignmentcorrection)**2 + (x-truex+alignmentcorrection)**2)<10**2)
-        # print(x,truex,y,truey)
         patch = img[y - savesize + imgcorrection:y + savesize + imgcorrection, x -
                                                                                savesize + imgcorrection:x + savesize + imgcorrection].astype(
             np.float32)
@@ -224,14 +238,8 @@ def detectcontact(
         res = np.array(
             [[searchmax, centremax, mean, outersurround, innersurround, centre]])
         pred = -4  # 250 - centremax
-        # pred -= (centremax-200)/160
-        # pred -= (searchmax-200)/60
         pred += 50 / (1 + searchmax)  # 50->+1
         pred += 50 / (1 + centremax)
-        # if centremax>250: pred-=2
-        # if searchmax>70: pred-=2
-        # pred -= min((centremax/innersurround)/30,4)
-        # pred -= (centremax/outersurround)/60
         pred += 20 * innersurround / centremax
         pred += 20 * outersurround / centremax
         pred += mean / 10  # not that helpful

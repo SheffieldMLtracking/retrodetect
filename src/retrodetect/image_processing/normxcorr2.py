@@ -11,7 +11,7 @@ Returns:
 
 import numpy as np
 from scipy.signal import fftconvolve
-
+import warnings
 
 def normxcorr2(
         template: np.array,
@@ -28,7 +28,7 @@ def normxcorr2(
     * "same": The output has the same size as the image, centered with respect to the `"full"` output.
     :return: An N-dimensional array of the same dimensionality as the `image` but with a size that depends on the chosen `mode`.
     """
-    # SC: need to do try break
+    # SC: need to do try break based on the below???
     # If this happens, it is probably a mistake
     #    if np.ndim(template) > np.ndim(image) or \
     #            len([i for i in range(np.ndim(template)) if template.shape[i] > image.shape[i]]) > 0:
@@ -49,6 +49,8 @@ def normxcorr2(
     # Remove small machine precision errors after subtraction
     image[np.where(image < 0)] = 0
 
+    warnings.filterwarnings('ignore')
+    
     template = np.sum(np.square(template))
     out = out / np.sqrt(image * template)
 
