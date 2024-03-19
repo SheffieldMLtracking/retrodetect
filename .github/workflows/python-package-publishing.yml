@@ -121,3 +121,6 @@ jobs:
       # https://github.com/marketplace/actions/pypi-publish
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          verbose: true
