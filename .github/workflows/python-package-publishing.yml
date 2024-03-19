@@ -13,7 +13,7 @@
 # https://packaging.python.org/en/latest/guides/section-build-and-publish/
 
 on: push
-name: Python package
+name: Python package publishing
 jobs:
   test:
     # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners
