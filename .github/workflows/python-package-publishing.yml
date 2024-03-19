@@ -98,6 +98,7 @@ jobs:
           # Don't complain on repeat uploads for the same package version
           # https://github.com/marketplace/actions/pypi-publish#tolerating-release-package-file-duplicates
           skip-existing: true
+          verbose: true
 
   publish-to-pypi:
     name: Publish to PyPI
