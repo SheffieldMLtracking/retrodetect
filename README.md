@@ -20,5 +20,16 @@ contact,found,searchimg = detectcontact(photo_list,n,delsize=100)
 output = detect(flash,noflash,blocksize=20, offset=10, searchbox=20, step=4, searchblocksize=50, ensemblesizesqrt=3, dilate=True,margin=100)
 ```
 
-# Citation
+# License
 
+`retrodetect` was created by Mike Smith. It is licensed under the terms
+of the MIT license.
+
+## Contributing
+
+Interested in contributing? Check out the contributing guidelines. 
+Please note that this project is released with a Code of Conduct. 
+By contributing to this project, you agree to abide by its terms.
+
+# Citation
+TBC
