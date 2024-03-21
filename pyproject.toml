@@ -15,12 +15,12 @@ authors = [
   { name="Mike Smith", email="m.t.smith@sheffield.ac.uk" },
 ]
 maintainers = [
-  {name = "XXX", email = "XXX@example.com"}
+  { name="Mike Smith", email="m.t.smith@sheffield.ac.uk" }
 ]
 description = "Finds retroreflectors in a pair of images"
 readme = "README.md"
 license = {file = "LICENSE"}
-keywords = ["bee", "retroreflectors", "XXX", "XXX", "XXX"]
+keywords = ["bee", "retroreflectors", "small animals", "tracking"]
 
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -38,10 +38,10 @@ test = [
 
 [project.urls]
 Homepage = "https://pypi.org/project/retrodetect/"
-Bug_Tracker = "https://github.com/pypa/sampleproject/issues"
-Documentation = "https://readthedocs.org"
+#Bug_Tracker = "https://github.com/pypa/sampleproject/issues"
+#Documentation = "https://readthedocs.org"
 Repository = "https://github.com/SheffieldMLtracking/retrodetect"
-Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+#Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
 
 #https://docs.pytest.org/en/8.0.x/reference/customize.html
 [tool.pytest.ini_options]
