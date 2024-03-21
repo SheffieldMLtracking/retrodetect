@@ -1,4 +1,4 @@
-from retrodetect.image_processing.image_processing import getshift, ensemblegetshift, getblockmaxedimage, \
+from retrodetect.image_processing import getshift, ensemblegetshift, getblockmaxedimage, \
     alignandsubtract, shiftimg
 import numpy as np
 import pytest

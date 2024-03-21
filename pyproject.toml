@@ -32,7 +32,8 @@ classifiers = [
 test = [
   "flake8",
   'pytest',
-  'opencv-python'
+  'opencv-python',
+  'pandas'
 ]
 
 [project.urls]

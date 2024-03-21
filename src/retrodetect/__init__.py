@@ -6,5 +6,5 @@ from importlib.metadata import version
 
 __version__ = version("retrodetect")
 
-from .detect import detectcontact
+from .detect import detectcontact,detect
 
