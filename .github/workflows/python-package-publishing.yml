@@ -119,6 +119,7 @@ jobs:
           name: python-package-distributions
           path: dist/
       # https://github.com/marketplace/actions/pypi-publish
+      # https://stackoverflow.com/questions/72661025/github-action-publishing-to-both-testpypi-and-pypi-fails#:~:text=PyPI%20doesn't%20allow%20to,get%20File%20already%20exists%20error.&text=GitHub%20actions%20will%20upload%20the,you%20push%20to%20the%20repository.
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
