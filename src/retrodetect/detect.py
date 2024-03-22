@@ -3,7 +3,7 @@ This module contains functions used for detection of the reflective tags.
 """
 import numpy as np
 
-from retrodetect.image_processing.image_processing import ensemblegetshift, getblockmaxedimage, alignandsubtract
+from retrodetect.image_processing import ensemblegetshift, getblockmaxedimage, alignandsubtract
 
 
 def detect(
