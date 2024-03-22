@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools >= 61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "retrodetect"
+version = "0.0.2"
+dependencies = [
+  "numpy",
+  "scipy",
+ ]
+requires-python = ">=3.8"
+authors = [
+  { name="Mike Smith", email="m.t.smith@sheffield.ac.uk" },
+]
+maintainers = [
+  { name="Mike Smith", email="m.t.smith@sheffield.ac.uk" }
+]
+description = "Finds retroreflectors in a pair of images"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["bee", "retroreflectors", "small animals", "tracking"]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+[project.optional-dependencies]
+test = [
+  "flake8",
+  'pytest',
+  'opencv-python',
+  'pandas'
+]
+
+[project.urls]
+Homepage = "https://pypi.org/project/retrodetect/"
+#Bug_Tracker = "https://github.com/pypa/sampleproject/issues"
+#Documentation = "https://readthedocs.org"
+Repository = "https://github.com/SheffieldMLtracking/retrodetect"
+#Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+#https://docs.pytest.org/en/8.0.x/reference/customize.html
+[tool.pytest.ini_options]
+pythonpath = ['src']
+testpaths = ['tests']
