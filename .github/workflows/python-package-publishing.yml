@@ -69,6 +69,7 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
+          if-no-files-found: error
 
   # OpenID Connect token that the pypi-publish actions needs to implement secretless trusted publishing to PyPI
   # https://docs.pypi.org/trusted-publishers/
