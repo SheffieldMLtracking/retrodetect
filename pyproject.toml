@@ -1,49 +1,56 @@
+# Python package configuration file
+# Packing user guide: https://packaging.python.org/
+
 [build-system]
 requires = ["setuptools >= 61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-
 [project]
 name = "retrodetect"
-version = "0.0.2"
+version = "1.0.0"
 dependencies = [
-  "numpy",
-  "scipy",
- ]
+    "numpy==2.*"
+]
 requires-python = ">=3.8"
 authors = [
-  { name="Mike Smith", email="m.t.smith@sheffield.ac.uk" },
+    { name = "Mike Smith", email = "m.t.smith@sheffield.ac.uk" },
+    { name = "Shi Min Chua", email = "s.chua@sheffield.ac.uk" },
+    { name = "Joe Heffer", email = "j.heffer@sheffield.ac.uk" },
 ]
 maintainers = [
-  { name="Mike Smith", email="m.t.smith@sheffield.ac.uk" }
+    { name = "Mike Smith", email = "m.t.smith@sheffield.ac.uk" }
 ]
 description = "Finds retroreflectors in a pair of images"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 keywords = ["bee", "retroreflectors", "small animals", "tracking"]
 
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 [project.optional-dependencies]
 test = [
-  "flake8",
-  'pytest',
-  'opencv-python',
-  'pandas'
+    "flake8",
+    'pytest'
 ]
 
 [project.urls]
 Homepage = "https://pypi.org/project/retrodetect/"
-#Bug_Tracker = "https://github.com/pypa/sampleproject/issues"
-#Documentation = "https://readthedocs.org"
+Bug_Tracker = "https://github.com/SheffieldMLtracking/retrodetect/issues"
+Documentation = "https://github.com/SheffieldMLtracking/retrodetect"
 Repository = "https://github.com/SheffieldMLtracking/retrodetect"
-#Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/SheffieldMLtracking/retrodetect/releases"
 
 #https://docs.pytest.org/en/8.0.x/reference/customize.html
 [tool.pytest.ini_options]
 pythonpath = ['src']
 testpaths = ['tests']
+
+# Executable scripts
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#creating-executable-scripts
+[project.scripts]
+retrodetect = "retrodetect.__main__:main"
+btretrodetect = "retrodetect.__main__:main"
