@@ -1,3 +1,6 @@
+
+This repo I think needs merging into btretrodetect, then deleting.
+
 # Bee retroreflection detector
 
 Detect retroreflectors in image pair.
